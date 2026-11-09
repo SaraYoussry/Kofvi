@@ -205,7 +205,7 @@ button.cov:hover{transform:translateY(-4px) rotate(-1.5deg)}
 .months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;align-items:end;height:170px}
 .months div{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
 .months .stack{display:flex;flex-direction:column-reverse;gap:2px;width:100%;max-width:34px;height:auto}
-.months .stack i{display:block;width:100%;height:14px;border-radius:3px;background:var(--c)}
+.months .stack button{display:block;width:100%;height:14px;border-radius:3px;background:var(--c);border:0;padding:0;cursor:pointer;transition:transform .15s}.months .stack button:hover,.months .stack button:focus-visible{transform:scale(1.15);outline:2px solid var(--ink);outline-offset:1px}
 .months span{font-size:10px;font-weight:800;color:var(--muted)}
 .months em{font-style:normal;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums}
 .genres{display:flex;flex-direction:column;gap:8px}
@@ -718,7 +718,7 @@ function vChallenge(){const st=S.settings,R=readThisYear(),goal=+st.goal||1,n=R.
   <section class="chal"><div class="panel"><div class="ring"><svg viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="${n} of ${goal} books"><circle cx="110" cy="110" r="88" fill="none" stroke="var(--line)" stroke-width="18"/><circle cx="110" cy="110" r="88" fill="none" stroke="var(--mint2)" stroke-width="18" stroke-linecap="round" stroke-dasharray="${C*p} ${C}" transform="rotate(-90 110 110)"/></svg><div class="c"><b>${n}</b><span>of ${goal} books</span></div></div>
    <div style="text-align:center;font-weight:700;color:var(--muted)">${Math.max(0,goal-n)} to go · ${Math.round(p*100)}%</div></div>
    <div class="panel"><div class="section-h"><h2 style="font-size:16px">Books finished each month</h2><p style="font-size:12px">each block is one book</p></div>
-   <div class="months">${m.map((x,i)=>`<div><em>${x.length||""}</em><div class="stack">${x.map(b=>`<i style="--c:${b.color}" title="${esc(b.title)}"></i>`).join("")}</div><span>${"JFMAMJJASOND"[i]}</span></div>`).join("")}</div></div></section>
+   <div class="months">${m.map((x,i)=>`<div><em>${x.length||""}</em><div class="stack">${x.map(b=>`<button type="button" style="--c:${b.color}" title="${esc(b.title)}" aria-label="${esc(b.title)}" data-open="${b.id}"></button>`).join("")}</div><span>${"JFMAMJJASOND"[i]}</span></div>`).join("")}</div></div></section>
   <section class="facts"><div class="tile t-pink"><span>Pages read</span><b>${pages.toLocaleString("en-US")}</b></div><div class="tile t-butter"><span>Average rating</span><b>${avg?avg.toFixed(1)+" ★":"–"}</b></div><div class="tile t-sky"><span>Spent on books</span><b>${money(spent)}</b></div><div class="tile t-mint"><span>Favourite genre</span><b style="font-size:18px">${gl[0]?esc(gl[0][0]):"–"}</b></div></section>
   <section class="panel"><h2 style="margin:0;font-size:16px;font-weight:900">Genres I read</h2><div class="genres">${gl.map(([k,v],i)=>`<div><span>${esc(k)}</span><i style="width:${v/gl[0][1]*100}%;background:var(${gc[i%gc.length]})"></i><b>${v}</b></div>`).join("")||"<p>No finished books yet.</p>"}</div></section>`}
 
@@ -779,19 +779,23 @@ const PAGES=[["shelf","My bookshelf"],["reading","Now reading"],["books","My boo
 function modal(html){$("#layer").innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="veil" data-act="mclose"></div>${html}</div>`;const f=$("#layer input,#layer select");f&&f.focus()}
 function fld(id,label,val,type="text",extra=""){return`<div class="fld ${extra}"><label for="${id}">${label}</label><input id="${id}" type="${type}" value="${esc(val??"")}"></div>`}
 function sel(id,label,opts,val,extra=""){return`<div class="fld ${extra}"><label for="${id}">${label}</label><select id="${id}">${opts.map(o=>`<option ${o===val?"selected":""}>${esc(o)}</option>`).join("")}</select></div>`}
+function seriesFld(val){const names=[...new Set(S.books.map(b=>(b.series||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));const known=!val||names.includes(val);
+  return`<div class="fld"><label for="f-sersel">Series</label><select id="f-sersel"><option value="">Not part of a series</option>${names.map(n=>`<option ${n===val?"selected":""}>${esc(n)}</option>`).join("")}<option value="__new" ${known?"":"selected"}>+ A new series…</option></select><input id="f-series" type="text" value="${esc(val||"")}" placeholder="Type the series name" ${known?"hidden":""} style="margin-top:6px"></div>`}
+function wireSeries(){const sl=$("#f-sersel"),inp=$("#f-series");if(!sl)return;sl.addEventListener("change",()=>{if(sl.value==="__new"){inp.hidden=false;inp.value="";inp.focus();return}inp.hidden=true;inp.value=sl.value;
+  if(sl.value){const same=S.books.filter(b=>b.series===sl.value);const num=$("#f-num"),au=$("#f-author");if(num&&!num.value){num.value=Math.max(0,...same.map(b=>+b.num||0))+1}if(au&&!au.value&&same[0])au.value=same[0].author}})}
 let draftCover=null,draftColor=null;
 function editBook(b){const isNew=!b;b=b||{title:"",author:"",series:"",num:"",genre:"Fantasy",format:"Paperback",status:"To Read",pages:"",page:0,start:"",finish:"",rating:0,spice:0,price:"",shelf:"",quote:"",review:"",cover:"",color:SWATCH[Math.floor(Math.random()*SWATCH.length)]};
   draftCover=b.cover;draftColor=b.color;
   modal(`<form class="form" id="bf"><h2>${isNew?"Add a book":"Edit book"}</h2>
    <div class="coverpick"><div id="cp">${coverHTML({...b,cover:draftCover,color:draftColor},"cov")}</div><div style="display:flex;flex-direction:column;gap:8px"><label class="btn small soft" for="cf" style="width:max-content">Upload a cover photo</label><input id="cf" type="file" accept="image/*" hidden><span class="k">or pick a spine colour</span><div class="swatches">${SWATCH.map(c=>`<button type="button" data-sw="${c}" style="background:${c}" class="${c===draftColor?"on":""}" aria-label="Colour ${c}"></button>`).join("")}</div></div></div>
    <div class="grid2">${fld("f-title","Title",b.title,"text","full")}${fld("f-author","Author",b.author)}${sel("f-status","Status",STATUSES,b.status)}
-   ${fld("f-series","Series",b.series)}${fld("f-num","Book # in series",b.num,"number")}${sel("f-genre","Genre",GENRES,b.genre)}${sel("f-format","Format",FORMATS,b.format)}
+   ${seriesFld(b.series)}${fld("f-num","Book # in series",b.num,"number")}${sel("f-genre","Genre",GENRES,b.genre)}${sel("f-format","Format",FORMATS,b.format)}
    ${fld("f-pages","Pages",b.pages,"number")}${fld("f-page","Page I'm on",b.page,"number")}${fld("f-start","Started",b.start,"date")}${fld("f-finish","Finished",b.finish,"date")}
    ${fld("f-price","Price ("+esc(S.settings.currency)+")",b.price,"number")}${fld("f-shelf","Shelf",b.shelf)}
    <div class="fld full"><label for="f-quote">Favourite quote</label><input id="f-quote" value="${esc(b.quote)}" placeholder="A line you want to remember"></div>
    <div class="fld full"><label for="f-review">My review</label><textarea id="f-review" rows="3" placeholder="What did you think?">${esc(b.review)}</textarea></div></div>
    <div class="actions"><button class="btn" type="submit">${isNew?"Put it on my shelf":"Save changes"}</button><button class="btn soft" type="button" data-act="mclose">Cancel</button></div></form>`);
-  $("#f-title").placeholder="e.g. The Night Circus";$("#f-author").placeholder="e.g. Erin Morgenstern";$("#f-shelf").placeholder="e.g. Favourites";
+  wireSeries();$("#f-title").placeholder="e.g. The Night Circus";$("#f-author").placeholder="e.g. Erin Morgenstern";$("#f-shelf").placeholder="e.g. Favourites";
   $("#cf").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas"),w=240;c.width=w;c.height=Math.round(im.height*w/im.width);c.getContext("2d").drawImage(im,0,0,c.width,c.height);draftCover=c.toDataURL("image/webp",.72);$("#cp").innerHTML=coverHTML({cover:draftCover},"cov")};im.src=rd.result};rd.readAsDataURL(f)});
   $("#bf").addEventListener("click",e=>{const s=e.target.closest("[data-sw]");if(!s)return;draftColor=s.dataset.sw;document.querySelectorAll("[data-sw]").forEach(x=>x.classList.toggle("on",x===s));$("#cp").innerHTML=coverHTML({title:$("#f-title").value||"Title",author:$("#f-author").value,cover:draftCover,color:draftColor},"cov")});
   $("#bf").addEventListener("submit",e=>{e.preventDefault();const v=id=>$("#"+id).value.trim();if(!v("f-title")){$("#f-title").focus();toast("Give the book a title first.");return}
