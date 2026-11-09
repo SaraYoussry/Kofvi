@@ -14,6 +14,7 @@
   --accent:"Instrument Serif",Georgia,"Times New Roman",serif;
   --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
   --shadow:0 1px 1px rgba(40,30,30,.08),0 6px 16px -6px rgba(60,40,40,.28);
+  --ground:#FBF3EF; --board:#1F2F5C; --r:14px;
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -542,28 +543,28 @@ dialog::backdrop{background:rgba(31,47,92,.35);backdrop-filter:blur(2px)}
 
 /* ---------- looks: Scrapbook (default), Editorial, Pink & charcoal ---------- */
 /* shared "simple" mode: flat grounds, no tape/pins/tilts */
-html[data-style="editorial"] .main,html[data-style="bold"] .main,
-html[data-style="editorial"] .main.blue,html[data-style="bold"] .main.blue{background-image:none;background-color:var(--ground)}
-html[data-style="editorial"] :is(.gingham-pink,.gingham-blue,.stripes,.grid-paper,.lined),
-html[data-style="bold"] :is(.gingham-pink,.gingham-blue,.stripes,.grid-paper,.lined){background-image:none;background-color:var(--paper)}
-html[data-style="editorial"] :is(.tape,.pin,.clip,.side::after),html[data-style="bold"] :is(.tape,.pin,.clip){display:none}
-html[data-style="editorial"] .side::after,html[data-style="bold"] .side::after{display:none}
-html[data-style="editorial"] .torn,html[data-style="bold"] .torn{-webkit-mask:none;mask:none;padding-bottom:18px}
-html[data-style="editorial"] :is(.paper,.head,.sticky,.obj .tag,.mepol,.cork .lbl,.polaroid),
-html[data-style="bold"] :is(.paper,.head,.sticky,.obj .tag,.mepol,.cork .lbl,.polaroid){transform:none!important;border-radius:var(--r)}
-html[data-style="editorial"] .paper,html[data-style="editorial"] .head{box-shadow:0 0 0 1px var(--line)}
-html[data-style="bold"] .paper,html[data-style="bold"] .head{box-shadow:none}
-html[data-style="editorial"] .obj .tag::before,html[data-style="bold"] .obj .tag::before{display:none}
-html[data-style="editorial"] .corkboard,html[data-style="bold"] .corkboard{background:var(--board);padding:6px;border-radius:var(--r)}
-html[data-style="editorial"] .cork,html[data-style="bold"] .cork{background:var(--board);background-image:none;box-shadow:none}
-html[data-style="editorial"] .cork .lbl,html[data-style="bold"] .cork .lbl{background:transparent;box-shadow:none;padding:0}
-html[data-style="editorial"] .cork .lbl h2,html[data-style="bold"] .cork .lbl h2{color:#fff}
-html[data-style="editorial"] .cork .lbl span,html[data-style="bold"] .cork .lbl span{color:rgba(255,255,255,.75)}
-html[data-style="editorial"] .sticky,html[data-style="bold"] .sticky{box-shadow:none}
-html[data-style="editorial"] .sticky:nth-child(n),html[data-style="bold"] .sticky:nth-child(n){background:var(--paper)}
-html[data-style="editorial"] .sticky:nth-child(2n),html[data-style="bold"] .sticky:nth-child(2n){background:var(--blush)}
-html[data-style="editorial"] .sticky.more,html[data-style="bold"] .sticky.more{background:var(--rose)!important}
-html[data-style="editorial"] .cutout,html[data-style="bold"] .cutout{filter:drop-shadow(0 6px 8px rgba(0,0,0,.14))}
+html.flat .main,html.flat .main,
+html.flat .main.blue,html.flat .main.blue{background-image:none;background-color:var(--ground)}
+html.flat :is(.gingham-pink,.gingham-blue,.stripes,.grid-paper,.lined),
+html.flat :is(.gingham-pink,.gingham-blue,.stripes,.grid-paper,.lined){background-image:none;background-color:var(--paper)}
+html.flat :is(.tape,.pin,.clip,.side::after),html.flat :is(.tape,.pin,.clip){display:none}
+html.flat .side::after,html.flat .side::after{display:none}
+html.flat .torn,html.flat .torn{-webkit-mask:none;mask:none;padding-bottom:18px}
+html.flat :is(.paper,.head,.sticky,.obj .tag,.mepol,.cork .lbl,.polaroid),
+html.flat :is(.paper,.head,.sticky,.obj .tag,.mepol,.cork .lbl,.polaroid){transform:none!important;border-radius:var(--r)}
+html.flat .paper,html.flat .head{box-shadow:0 0 0 1px var(--line)}
+html.flat .paper,html.flat .head{box-shadow:none}
+html.flat .obj .tag::before,html.flat .obj .tag::before{display:none}
+html.flat .corkboard,html.flat .corkboard{background:var(--board);padding:6px;border-radius:var(--r)}
+html.flat .cork,html.flat .cork{background:var(--board);background-image:none;box-shadow:none}
+html.flat .cork .lbl,html.flat .cork .lbl{background:transparent;box-shadow:none;padding:0}
+html.flat .cork .lbl h2,html.flat .cork .lbl h2{color:#fff}
+html.flat .cork .lbl span,html.flat .cork .lbl span{color:rgba(255,255,255,.75)}
+html.flat .sticky,html.flat .sticky{box-shadow:none}
+html.flat .sticky:nth-child(n),html.flat .sticky:nth-child(n){background:var(--paper)}
+html.flat .sticky:nth-child(2n),html.flat .sticky:nth-child(2n){background:var(--blush)}
+html.flat .sticky.more,html.flat .sticky.more{background:var(--rose)!important}
+html.flat .cutout,html.flat .cutout{filter:drop-shadow(0 6px 8px rgba(0,0,0,.14))}
 
 /* Editorial: warm white, powder blue, chocolate, condensed italic serif */
 html[data-style="editorial"]{
@@ -617,8 +618,62 @@ html[data-style="bold"] .ribbon b{color:var(--blush)}
 html[data-style="bold"] .ribbon .btn{background:var(--blush);color:#2E2E31}
 @media (max-width:860px){html[data-style="bold"] .side{background:#2E2E31}}
 
+
+/* ---------- Simple layout ---------- */
+.simple{display:flex;flex-direction:column;gap:18px}
+.simple .paper{border-radius:var(--r);padding:20px 22px}
+.s-hello{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.s-hello>div{flex:1}
+.s-hello h1{font-size:clamp(26px,3vw,38px);line-height:1.05;margin-top:4px}
+.s-av{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:none}
+.s-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.s-stat{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);padding:16px 18px!important}
+.s-stat:hover{box-shadow:0 0 0 2px var(--navy)}
+.s-stat span{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.s-stat b{font:34px/1.05 var(--display);color:var(--navy)}
+.s-stat b em{font-style:normal;font-size:20px;color:var(--muted)}
+.s-stat small{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.s-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+.s-top h2{font-size:24px}
+.s-count{display:inline-block;font:700 13px/22px var(--body);min-width:24px;padding:0 7px;border-radius:20px;background:var(--blush);color:var(--rose-ink);vertical-align:middle;text-align:center;letter-spacing:0;text-transform:none}
+.lnk{background:none;border:0;padding:0;color:var(--navy);font-weight:700;font-size:13px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.s-empty{color:var(--muted);margin:10px 0}
+.s-next{font-size:13px;color:var(--muted);margin:12px 0 0}
+.simple .todo{margin-top:4px}
+.simple .todo li{min-height:76px;grid-template-columns:52px 56px minmax(0,1fr) auto;border-color:var(--line)}
+.simple .todo h3{font-size:17px}
+.simple .todo .acts{flex-direction:column}
+.s-table{width:100%;border-collapse:collapse;font-size:14px}
+.s-table th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+.s-table td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.s-table tr[data-act]{cursor:pointer}
+.s-table tbody tr:hover{background:var(--cream)}
+.s-table td b{display:block;font-weight:600;color:var(--ink)}
+.s-table td small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.s-due{white-space:nowrap;font-weight:700;color:var(--navy);width:1%}
+.s-due.late{color:var(--rose-ink)}
+.s-more{margin-top:10px}
+.s-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.s-day{border:1px solid var(--line);border-radius:10px;padding:8px;min-height:110px;display:flex;flex-direction:column;gap:6px;background:var(--paper)}
+.s-day.today{box-shadow:0 0 0 2px var(--navy);border-color:transparent}
+.s-dh{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.s-dh b{font:20px/1 var(--display);color:var(--navy)}
+.s-mini{border:0;background:var(--cream);border-radius:8px;padding:6px;text-align:left;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.s-mini b{font-size:12px;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.s-mini .chip{font-size:10px;padding:0 7px 0 6px;line-height:17px}
+.s-free{border:1px dashed var(--line);background:none;border-radius:8px;color:var(--muted);font-size:12px;padding:6px;margin-top:auto}
+.s-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;border-radius:10px;overflow:hidden;max-width:360px}
+.s-grid div{aspect-ratio:4/5;background:var(--blush) center/cover;position:relative;display:flex;align-items:center;justify-content:center;text-align:center}
+.s-grid div.pl{box-shadow:inset 0 0 0 3px var(--corn)}
+.s-grid .np{font-size:11px;padding:6px;color:var(--ink)}
+.s-ideas{list-style:none;margin:6px 0 0;padding:0}
+.s-ideas li{padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+@media (max-width:1000px){.s-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.s-cols{grid-template-columns:1fr}.s-week{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:560px){.s-week{grid-template-columns:1fr 1fr}.simple .todo li{grid-template-columns:44px 48px minmax(0,1fr)}.simple .todo .acts{grid-column:2/-1;flex-direction:row}.s-hello .btn{width:100%;justify-content:center}}
 /* look picker */
-.looks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.looks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px}
+.looks.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .look{border:0;background:#fff;border-radius:14px;padding:10px;text-align:left;box-shadow:0 0 0 1.5px var(--line);display:flex;flex-direction:column;gap:8px;color:var(--ink)}
 .look[aria-pressed="true"]{box-shadow:0 0 0 2.5px var(--navy)}
 .look .sw{display:flex;height:46px;border-radius:9px;overflow:hidden}
@@ -808,7 +863,7 @@ const LOOKS=[
   {id:"editorial",name:"Editorial",sub:"Clean white, powder blue, chocolate",sw:["#F3F0EC","#D3E0F5","#4A3324","#1C1A19"]},
   {id:"bold",name:"Pink & charcoal",sub:"Bold type, soft pink, dark grey",sw:["#F2F0F1","#F8C8DC","#3C3C40","#2E2E31"]}
 ];
-function applyLook(){document.documentElement.dataset.style=(S.settings&&S.settings.style)||"scrapbook"}
+function applyLook(){const st=(S.settings&&S.settings.style)||"scrapbook",ly=(S.settings&&S.settings.layout)||"desk",d=document.documentElement;d.dataset.style=st;d.dataset.layout=ly;d.classList.toggle("flat",st!=="scrapbook"||ly==="simple")}
 function render(){
   applyLook();renderNav();
   const r={today:vToday,calendar:vCalendar,posts:vPosts,feed:vFeed,ideas:vIdeas,hashtags:vHashtags,results:vResults,studio:vStudio}[view];
@@ -836,6 +891,7 @@ function vToday(){
   const greet=S.settings.today?"Good morning":(h<12?"Good morning":h<18?"Good afternoon":"Good evening");
   const first=(S.settings.brand||"").split(" ")[0]||"there";
   const days=[...Array(7)].map((_,i)=>addDays(ws,i));
+  if(((S.settings&&S.settings.layout)||"desk")==="simple")return todaySimple({t,ti,todays,upcoming,pct,wk,wkPosted,needsAll,best,feed,plannedFeed,greet,first,days,ws,we});
   return `<div class="desk">
   <section class="hello torn">
     <figure class="mepol"><span class="tape"></span>${S.settings.avatar||S.isSample?`<img src="${res(S.settings.avatar)||IMG.miaPol}" alt="${esc(S.settings.brand)}">`:`<label class="addme"><span>+ Add your photo</span><input type="file" accept="image/*" id="sAvatar" aria-label="Add your photo"></label>`}<figcaption>${esc(first)} x</figcaption></figure>
@@ -895,6 +951,63 @@ function vToday(){
     <div class="row">${days.map(d=>{const di=iso(d);const ps=sorted(S.posts.filter(p=>p.date===di));return `<div class="day${di===ti?" today":""}"><div class="dh"><b class="num">${d.getDate()}</b><span>${DOW[d.getDay()].toUpperCase()}</span></div>
       ${ps.length?ps.map(p=>`<button class="mini" data-act="edit" data-id="${p.id}">${photo(p)?`<img src="${photo(p)}" alt="">`:`<span class="ph">${esc(p.type)}</span>`}<b>${esc(p.title)}</b><span class="pf" style="font-size:11px">${pfChip(p.platform)}</span>${stChip(p.status)}</button>`).join(""):`<button class="empty-day" style="border:0;background:none;text-align:left" data-act="new" data-date="${di}">Free day. Add a post?</button>`}</div>`}).join("")}</div>
   </section>
+  </div>`;
+}
+
+
+function todaySimple(o){
+  const {t,ti,todays,upcoming,pct,wk,wkPosted,needsAll,best,feed,plannedFeed,greet,first,days,ws,we}=o;
+  const due=p=>{const d=Math.round((parse(p.date)-t)/864e5);return d<0?"Overdue":d===0?"Today":d===1?"Tomorrow":"In "+d+" days"};
+  const list=needsAll.slice(0,8);
+  return `<div class="simple">
+  <section class="s-hello paper">
+    <img class="s-av" src="${avatar()}" alt="">
+    <div style="min-width:0"><div class="eyebrow">${["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][t.getDay()]}, ${t.getDate()} ${MONTHS[t.getMonth()]} ${t.getFullYear()}${S.settings.today?" · sample date":""}</div>
+      <h1>${greet}, ${esc(first)}. <span class="em">${todays.length?todays.length+" post"+(todays.length>1?"s":"")+" today.":"Nothing goes out today."}</span></h1></div>
+    <button class="btn pink" data-act="new" data-date="${ti}">${ICON.plus} Plan a post</button>
+  </section>
+  <div class="s-stats">
+    <a class="s-stat paper" href="#calendar"><span>Today</span><b class="num">${todays.length}</b><small>posts planned</small></a>
+    <a class="s-stat paper" href="#posts"><span>This week</span><b class="num">${wkPosted}<em> / ${wk.length}</em></b><small>posted, ${fmtShort(iso(ws)).slice(4)} to ${fmtShort(iso(we)).slice(4)}</small></a>
+    <a class="s-stat paper" href="#posts"><span>${MONTHS[t.getMonth()]}</span><b class="num">${pct}%</b><small>posted</small><div class="meter"><i style="width:${pct}%"></i></div></a>
+    <a class="s-stat paper" href="#results"><span>Best this month</span><b class="num">${best?k(eng(best)):"–"}</b><small>${best?esc(best.title):"No results yet"}</small></a>
+  </div>
+  <div class="s-cols">
+    <section class="s-card paper" aria-labelledby="sTodayH">
+      <div class="s-top"><h2 id="sTodayH">Today</h2><a class="lnk" href="#calendar">Calendar</a></div>
+      ${!S.posts.length?`<div class="getstart"><ol>
+        <li class="${S.settings.avatar?"done":""}"><b>Add your photo</b><span>In Studio setup.</span><a class="btn sm ghost" href="#studio">Studio setup</a></li>
+        <li><b>Plan your first post</b><span>Pick a day and add a title.</span><button class="btn sm pink" data-act="new" data-date="${ti}">${ICON.plus} Plan a post</button></li>
+        <li class="${S.ideas.length?"done":""}"><b>Save a few ideas</b><span>Plan them later.</span><a class="btn sm ghost" href="#ideas">Idea jar</a></li></ol></div>`
+      :todays.length?`<ul class="todo">${todays.map(p=>`<li>
+        <div class="t">${fmtTime(p.time).replace(/ (AM|PM)/,"")}<small>${fmtTime(p.time).slice(-2)}</small></div>
+        ${upThumb(p)}
+        <div style="min-width:0"><h3>${esc(p.title)}</h3><div class="meta">${pfChip(p.platform)}<span class="tagmini">${esc(p.type)}</span>${stChip(p.status)}</div></div>
+        <div class="acts">${p.status!=="Posted"?`<button class="btn sm" data-act="posted" data-id="${p.id}">${ICON.check} Mark posted</button>`:""}<button class="btn ghost sm" data-act="edit" data-id="${p.id}">${ICON.edit} Open</button></div>
+      </li>`).join("")}</ul>`:`<p class="s-empty">Nothing is planned for today.</p>`}
+      ${upcoming[0]?`<p class="s-next">Next up: <b>${esc(upcoming[0].title)}</b> · ${fmtShort(upcoming[0].date)}, ${fmtTime(upcoming[0].time)} on ${esc(upcoming[0].platform)}</p>`:""}
+    </section>
+    <section class="s-card paper" aria-labelledby="sNeedH">
+      <div class="s-top"><h2 id="sNeedH">Needs work <span class="s-count">${needsAll.length}</span></h2>${needsAll.length?`<button class="lnk" data-act="todo">See all</button>`:""}</div>
+      ${list.length?`<table class="s-table"><thead><tr><th>Due</th><th>Post</th><th>Status</th></tr></thead><tbody>${list.map(p=>`<tr data-act="edit" data-id="${p.id}" tabindex="0"><td class="s-due${due(p)==="Overdue"?" late":""}">${due(p)}<small>${fmtShort(p.date)}</small></td><td><b>${esc(p.title)}</b><small>${pfChip(p.platform)}</small></td><td>${stChip(p.status)}</td></tr>`).join("")}</tbody></table>
+        ${needsAll.length>list.length?`<button class="lnk s-more" data-act="todo">+${needsAll.length-list.length} more to do</button>`:""}`:`<p class="s-empty">Everything coming up is ready.</p>`}
+    </section>
+  </div>
+  <section class="s-card paper" aria-labelledby="sWeekH">
+    <div class="s-top"><h2 id="sWeekH">This week</h2><a class="lnk" href="#calendar">Open calendar</a></div>
+    <div class="s-week">${days.map(d=>{const di=iso(d);const ps=sorted(S.posts.filter(p=>p.date===di));return `<div class="s-day${di===ti?" today":""}"><div class="s-dh"><span>${DOW[d.getDay()]}</span><b class="num">${d.getDate()}</b></div>
+      ${ps.length?ps.map(p=>`<button class="s-mini" data-act="edit" data-id="${p.id}"><b>${esc(p.title)}</b>${stChip(p.status)}</button>`).join(""):`<button class="s-free" data-act="new" data-date="${di}">+ Add</button>`}</div>`}).join("")}</div>
+  </section>
+  <div class="s-cols">
+    <section class="s-card paper" aria-labelledby="sFeedH">
+      <div class="s-top"><h2 id="sFeedH">Instagram grid</h2><a class="lnk" href="#feed">Feed preview</a></div>
+      ${feed.length?`<div class="s-grid">${feed.slice(0,9).map(p=>`<div class="${p.status!=="Posted"?"pl":""}" style="${photo(p)?`background-image:url('${photo(p)}')`:""}">${photo(p)?"":`<span class="np">${esc(p.title)}</span>`}</div>`).join("")}</div><p class="s-next">${plannedFeed} planned posts sit on top of your feed. Outlined squares are not posted yet.</p>`:`<p class="s-empty">Your planned Instagram posts show up here.</p>`}
+    </section>
+    <section class="s-card paper" aria-labelledby="sIdeaH">
+      <div class="s-top"><h2 id="sIdeaH">Idea jar <span class="s-count">${S.ideas.length}</span></h2><a class="lnk" href="#ideas">Open</a></div>
+      ${S.ideas.length?`<ul class="s-ideas">${S.ideas.slice(0,6).map(i=>`<li>${esc(i.title||i.text||"")}</li>`).join("")}</ul>`:`<p class="s-empty">No ideas saved yet.</p>`}
+    </section>
+  </div>
   </div>`;
 }
 
@@ -1057,7 +1170,10 @@ function vStudio(){
   const s=S.settings;
   return `<div class="head"><div><div class="eyebrow">Studio setup</div><h1>Make it <span class="em">yours</span></h1><p>Fill this in once. Your name, photo and lists show up across the planner.</p></div></div>
   <div class="setgrid">
-    <section class="setcard wide paper torn"><h2 style="font-size:24px">Look</h2><p style="margin:4px 0 0;color:var(--muted)">Pick the style you like. Your posts and photos stay the same.</p>
+    <section class="setcard wide paper torn"><h2 style="font-size:24px">Look</h2><p style="margin:4px 0 0;color:var(--muted)">Pick the layout and colours you like. Your posts and photos stay the same.</p>
+      <div class="eyebrow" style="margin-top:14px">Layout</div>
+      <div class="looks two">${[["desk","Desk","Notebook, phone and cork board on your desk"],["simple","Simple","Plain cards, lists and tables. Quick to scan"]].map(([id,n,sub])=>{const on=(s.layout||"desk")===id;return `<button type="button" class="look" data-act="setlayout" data-layout="${id}" aria-pressed="${on}"><b>${n}</b><small>${sub}</small>${on?'<span class="on">✓ In use</span>':""}</button>`}).join("")}</div>
+      <div class="eyebrow" style="margin-top:16px">Colours</div>
       <div class="looks">${LOOKS.map(l=>{const on=(s.style||"scrapbook")===l.id;return `<button type="button" class="look" data-act="setlook" data-look="${l.id}" aria-pressed="${on}"><span class="sw">${l.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${l.name}</b><small>${l.sub}</small>${on?'<span class="on">✓ In use</span>':""}</button>`}).join("")}</div></section>
     <section class="setcard paper torn"><span class="tape" style="top:-12px;left:40px"></span><h2 style="font-size:24px">Your details</h2>
       <div class="form">
@@ -1288,6 +1404,7 @@ document.addEventListener("click",ev=>{
   else if(a==="new"){ev.preventDefault();openEditor(P(b.dataset.date||todayIso(),"12:00",S.settings.platforms[0],S.settings.types[0],S.settings.pillars[0],"Idea","","","","",true),true)}
   else if(a==="posted"&&post){post.status="Posted";save();render();toast("Marked as posted. Add the results later.")}
   else if(a==="signout"){if(sb)sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}S=sample();}
+  else if(a==="setlayout"){S.settings.layout=b.dataset.layout;save();render();toast("Layout changed");return}
   else if(a==="setlook"){S.settings.style=b.dataset.look;save();render();toast("Look changed");return}
   else if(a==="navmore"){const m=$("#moreSheet");m.hidden=!m.hidden;renderNav()}
   else if(a==="welcome"){showWelcome(true)}
