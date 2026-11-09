@@ -7,7 +7,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Mrs+Saint+Delafield&family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Mrs+Saint+Delafield&family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;700&family=Archivo:wght@500;700;800;900&display=swap">
 <style>
 /* Layout: a scrapbook desk. Notebook-spine nav on the left, gingham ground, paper pieces taped and pinned on top, every piece carrying live planner data. Single light look by choice (paper and photos). */
 :root{
@@ -542,6 +542,94 @@ dialog::backdrop{background:rgba(31,47,92,.35);backdrop-filter:blur(2px)}
 .emptyfeed{padding:30px 16px;text-align:center;font:italic 15px/1.3 var(--accent);color:var(--muted);margin:0}
 @media (max-width:860px){.toast{bottom:calc(92px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 32px);text-align:center}}
 @media (max-width:520px){.getstart li{grid-template-columns:40px minmax(0,1fr)}.getstart .btn{grid-row:auto;grid-column:2;justify-self:start;margin-top:6px}}
+
+/* ---------- looks: Scrapbook (default), Editorial, Pink & charcoal ---------- */
+/* shared "simple" mode: flat grounds, no tape/pins/tilts */
+html[data-style="editorial"] .main,html[data-style="bold"] .main,
+html[data-style="editorial"] .main.blue,html[data-style="bold"] .main.blue{background-image:none;background-color:var(--ground)}
+html[data-style="editorial"] :is(.gingham-pink,.gingham-blue,.stripes,.grid-paper,.lined),
+html[data-style="bold"] :is(.gingham-pink,.gingham-blue,.stripes,.grid-paper,.lined){background-image:none;background-color:var(--paper)}
+html[data-style="editorial"] :is(.tape,.pin,.clip,.side::after),html[data-style="bold"] :is(.tape,.pin,.clip){display:none}
+html[data-style="editorial"] .side::after,html[data-style="bold"] .side::after{display:none}
+html[data-style="editorial"] .torn,html[data-style="bold"] .torn{-webkit-mask:none;mask:none;padding-bottom:18px}
+html[data-style="editorial"] :is(.paper,.head,.sticky,.obj .tag,.mepol,.cork .lbl,.polaroid),
+html[data-style="bold"] :is(.paper,.head,.sticky,.obj .tag,.mepol,.cork .lbl,.polaroid){transform:none!important;border-radius:var(--r)}
+html[data-style="editorial"] .paper,html[data-style="editorial"] .head{box-shadow:0 0 0 1px var(--line)}
+html[data-style="bold"] .paper,html[data-style="bold"] .head{box-shadow:none}
+html[data-style="editorial"] .obj .tag::before,html[data-style="bold"] .obj .tag::before{display:none}
+html[data-style="editorial"] .corkboard,html[data-style="bold"] .corkboard{background:var(--board);padding:6px;border-radius:var(--r)}
+html[data-style="editorial"] .cork,html[data-style="bold"] .cork{background:var(--board);background-image:none;box-shadow:none}
+html[data-style="editorial"] .cork .lbl,html[data-style="bold"] .cork .lbl{background:transparent;box-shadow:none;padding:0}
+html[data-style="editorial"] .cork .lbl h2,html[data-style="bold"] .cork .lbl h2{color:#fff}
+html[data-style="editorial"] .cork .lbl span,html[data-style="bold"] .cork .lbl span{color:rgba(255,255,255,.75)}
+html[data-style="editorial"] .sticky,html[data-style="bold"] .sticky{box-shadow:none}
+html[data-style="editorial"] .sticky:nth-child(n),html[data-style="bold"] .sticky:nth-child(n){background:var(--paper)}
+html[data-style="editorial"] .sticky:nth-child(2n),html[data-style="bold"] .sticky:nth-child(2n){background:var(--blush)}
+html[data-style="editorial"] .sticky.more,html[data-style="bold"] .sticky.more{background:var(--rose)!important}
+html[data-style="editorial"] .cutout,html[data-style="bold"] .cutout{filter:drop-shadow(0 6px 8px rgba(0,0,0,.14))}
+
+/* Editorial: warm white, powder blue, chocolate, condensed italic serif */
+html[data-style="editorial"]{
+  --ground:#F3F0EC; --cream:#F3F0EC; --paper:#FFFFFF; --blush:#D3E0F5; --rose:#4A3324; --rose-ink:#4A3324;
+  --corn:#6F8FC9; --sky:#D3E0F5; --navy:#1C1A19; --sage:#7FA488; --sage-soft:#E3EBE4;
+  --ink:#1C1A19; --muted:#6E6862; --line:#E4DED7; --board:#4A3324; --wood:#4A3324; --r:14px;
+  --display:"Instrument Serif",Georgia,serif; --accent:"Instrument Serif",Georgia,serif;
+  --shadow:0 0 0 1px #E4DED7;
+}
+html[data-style="editorial"] h1,html[data-style="editorial"] h2{font-style:italic;letter-spacing:-.02em}
+html[data-style="editorial"] .head h1{font-size:clamp(38px,4.4vw,56px)}
+html[data-style="editorial"] .em{color:var(--rose)}
+html[data-style="editorial"] .btn{background:#1C1A19}
+html[data-style="editorial"] .btn:hover{background:#4A3324}
+html[data-style="editorial"] .btn.pink{background:#4A3324}
+html[data-style="editorial"] .btn.pink:hover{background:#1C1A19}
+html[data-style="editorial"] .btn.ghost{background:#fff;color:#1C1A19;box-shadow:inset 0 0 0 1.5px #1C1A19}
+html[data-style="editorial"] .nav a[aria-current="page"]{background:var(--blush);color:#1C1A19}
+html[data-style="editorial"] .nav a:hover{background:#F3F0EC}
+html[data-style="editorial"] .ribbon{background:#4A3324}
+html[data-style="editorial"] .ribbon b{color:#D3E0F5}
+html[data-style="editorial"] .ribbon .btn{background:#D3E0F5;color:#1C1A19}
+html[data-style="editorial"] .eyebrow{letter-spacing:.2em}
+
+/* Pink & charcoal: bold uppercase sans, charcoal panels, soft pink pills */
+html[data-style="bold"]{
+  --ground:#F2F0F1; --cream:#F2F0F1; --paper:#FFFFFF; --blush:#F8C8DC; --rose:#D9558F; --rose-ink:#B23A70;
+  --corn:#D9558F; --sky:#F8C8DC; --navy:#2E2E31; --sage:#7FA488; --sage-soft:#E3EBE4;
+  --ink:#2A2A2D; --muted:#6D6B70; --line:#E6E2E4; --board:#3C3C40; --wood:#3C3C40; --r:22px;
+  --display:"Archivo","Figtree",system-ui,sans-serif; --accent:"Archivo","Figtree",system-ui,sans-serif;
+  --body:"Figtree",system-ui,sans-serif; --shadow:none;
+}
+html[data-style="bold"] h1,html[data-style="bold"] h2,html[data-style="bold"] h3{font-weight:900;text-transform:uppercase;letter-spacing:-.025em;line-height:.95}
+html[data-style="bold"] .head h1{font-size:clamp(30px,3.6vw,46px)}
+html[data-style="bold"] .em{font-style:normal;color:var(--rose)}
+html[data-style="bold"] .brand b{font-weight:900;text-transform:uppercase;font-size:17px}
+html[data-style="bold"] :is(.sticky b,.note h4,.polaroid figcaption,.ribbon b){font-style:normal;font-weight:800}
+html[data-style="bold"] .btn{background:#2E2E31}
+html[data-style="bold"] .btn.pink,html[data-style="bold"] .btn.pink:hover{background:var(--blush);color:#2E2E31}
+html[data-style="bold"] .btn.ghost{background:#fff;color:#2E2E31;box-shadow:inset 0 0 0 1.5px #2E2E31}
+html[data-style="bold"] .side{background:#2E2E31;border-right:0}
+html[data-style="bold"] .side :is(.brand b,.foot b){color:#fff}
+html[data-style="bold"] .side :is(.brand small,.foot){color:rgba(255,255,255,.65)}
+html[data-style="bold"] .side .brand,html[data-style="bold"] .side .foot{border-color:rgba(255,255,255,.15)}
+html[data-style="bold"] .nav a{color:#fff}
+html[data-style="bold"] .nav a:hover{background:rgba(255,255,255,.08)}
+html[data-style="bold"] .nav a[aria-current="page"]{background:var(--blush);color:#2E2E31}
+html[data-style="bold"] .sticky.more b,html[data-style="bold"] .sticky.more{color:#fff}
+html[data-style="bold"] .ribbon{background:#2E2E31}
+html[data-style="bold"] .ribbon b{color:var(--blush)}
+html[data-style="bold"] .ribbon .btn{background:var(--blush);color:#2E2E31}
+@media (max-width:860px){html[data-style="bold"] .side{background:#2E2E31}}
+
+/* look picker */
+.looks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.look{border:0;background:#fff;border-radius:14px;padding:10px;text-align:left;box-shadow:0 0 0 1.5px var(--line);display:flex;flex-direction:column;gap:8px;color:var(--ink)}
+.look[aria-pressed="true"]{box-shadow:0 0 0 2.5px var(--navy)}
+.look .sw{display:flex;height:46px;border-radius:9px;overflow:hidden}
+.look .sw i{flex:1}
+.look b{font-size:14px}
+.look small{font-size:12px;color:var(--muted);line-height:1.3}
+.look .on{font-size:11px;font-weight:700;color:var(--navy)}
+@media (max-width:620px){.looks{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -722,8 +810,14 @@ function route(){
   $("#moreSheet").hidden=true;
   const h=location.hash.slice(1);view=VIEWS.some(v=>v.id===h)?h:"today";render();
 }
+const LOOKS=[
+  {id:"scrapbook",name:"Scrapbook",sub:"Paper, tape and gingham",sw:["#F7F1E6","#F2C9CC","#A9C2EA","#1F2F5C"]},
+  {id:"editorial",name:"Editorial",sub:"Clean white, powder blue, chocolate",sw:["#F3F0EC","#D3E0F5","#4A3324","#1C1A19"]},
+  {id:"bold",name:"Pink & charcoal",sub:"Bold type, soft pink, dark grey",sw:["#F2F0F1","#F8C8DC","#3C3C40","#2E2E31"]}
+];
+function applyLook(){document.documentElement.dataset.style=(S.settings&&S.settings.style)||"scrapbook"}
 function render(){
-  renderNav();
+  applyLook();renderNav();
   const r={today:vToday,calendar:vCalendar,posts:vPosts,feed:vFeed,ideas:vIdeas,hashtags:vHashtags,results:vResults,studio:vStudio}[view];
   $("#view").innerHTML=(S.isSample?`<div class="ribbon"><b>Sample plan</b><span>You're looking around Mia Rose Studio's example. Nothing here is yours yet.</span><button type="button" class="btn sm" data-act="welcome">Start my own planner</button></div>`:"")+r();document.querySelector(".main").classList.toggle("blue",view!=="today"&&view!=="ideas");
   const m=document.querySelector(".main");if(m)window.scrollTo(0,0);
@@ -970,6 +1064,8 @@ function vStudio(){
   const s=S.settings;
   return `<div class="head"><div><div class="eyebrow">Studio setup</div><h1>Make it <span class="em">yours</span></h1><p>Fill this in once. Your name, photo and lists show up across the planner.</p></div></div>
   <div class="setgrid">
+    <section class="setcard wide paper torn"><h2 style="font-size:24px">Look</h2><p style="margin:4px 0 0;color:var(--muted)">Pick the style you like. Your posts and photos stay the same.</p>
+      <div class="looks">${LOOKS.map(l=>{const on=(s.style||"scrapbook")===l.id;return `<button type="button" class="look" data-act="setlook" data-look="${l.id}" aria-pressed="${on}"><span class="sw">${l.sw.map(c=>`<i style="background:${c}"></i>`).join("")}</span><b>${l.name}</b><small>${l.sub}</small>${on?'<span class="on">✓ In use</span>':""}</button>`}).join("")}</div></section>
     <section class="setcard paper torn"><span class="tape" style="top:-12px;left:40px"></span><h2 style="font-size:24px">Your details</h2>
       <div class="form">
         <label>Brand or name<input class="inp" id="sBrand" value="${esc(s.brand)}"></label>
@@ -1199,6 +1295,7 @@ document.addEventListener("click",ev=>{
   else if(a==="new"){ev.preventDefault();openEditor(P(b.dataset.date||todayIso(),"12:00",S.settings.platforms[0],S.settings.types[0],S.settings.pillars[0],"Idea","","","","",true),true)}
   else if(a==="posted"&&post){post.status="Posted";save();render();toast("Marked as posted. Add the results later.")}
   else if(a==="signout"){if(sb)sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}S=sample();}
+  else if(a==="setlook"){S.settings.style=b.dataset.look;save();render();toast("Look changed");return}
   else if(a==="navmore"){const m=$("#moreSheet");m.hidden=!m.hidden;renderNav()}
   else if(a==="welcome"){showWelcome(true)}
   else if(a==="wsample"){S.welcomed=true;save();$("#welcome").hidden=true;render();toast("Enjoy the tour. Start your own planner from the banner.")}
