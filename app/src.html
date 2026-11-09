@@ -510,6 +510,8 @@ dialog::backdrop{background:rgba(31,47,92,.35);backdrop-filter:blur(2px)}
 .wcard.login{max-width:540px}
 .login .wbox{max-width:none}
 .login label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--ink)}
+.loginalt{margin:14px 0 0;font-size:13px;color:var(--muted)}
+.loginalt a{color:var(--navy);font-weight:600}
 .login .hint{font-weight:400;color:var(--muted)}
 .reshint{grid-column:1/-1;font-size:12.5px;color:var(--muted);background:#F6F2EC;border-radius:10px;padding:8px 12px}
 @media (max-width:860px){
@@ -698,7 +700,7 @@ html[data-style="bold"] .ribbon .btn{background:var(--blush);color:#2E2E31}
 <dialog id="dlg"><form class="dlg" id="dlgForm" method="dialog"></form></dialog>
 <div class="toast" id="toast" hidden></div>
 
-<script src="config.js"></script>
+<script src="/planner/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 /*ASSETS*/
@@ -708,7 +710,9 @@ html[data-style="bold"] .ribbon .btn{background:var(--blush);color:#2E2E31}
 "use strict";
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const KEY="miarose-planner-v1";
+const PRODUCT="social-media-planner";
+const DEMO=/[?&]demo\b/.test(location.search);
+const KEY=DEMO?"kofvi-social-demo":"miarose-planner-v1";
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const STATUSES=["Idea","Writing","Creating","Scheduled","Posted"];
@@ -867,7 +871,7 @@ function applyLook(){const st=(S.settings&&S.settings.style)||"scrapbook",ly=(S.
 function render(){
   applyLook();renderNav();
   const r={today:vToday,calendar:vCalendar,posts:vPosts,feed:vFeed,ideas:vIdeas,hashtags:vHashtags,results:vResults,studio:vStudio}[view];
-  $("#view").innerHTML=(S.isSample?`<div class="ribbon"><b>Sample plan</b><span>You're looking around Mia Rose Studio's example. Nothing here is yours yet.</span><button type="button" class="btn sm" data-act="welcome">Start my own planner</button></div>`:"")+r();document.querySelector(".main").classList.toggle("blue",view!=="today"&&view!=="ideas");
+  $("#view").innerHTML=(DEMO?`<div class="ribbon"><b>Demo</b><span>Try everything. Your changes stay in this browser only.</span><a class="btn sm" href="./">Sign in to my planner</a></div>`:S.isSample?`<div class="ribbon"><b>Sample plan</b><span>You're looking around Mia Rose Studio's example. Nothing here is yours yet.</span><button type="button" class="btn sm" data-act="welcome">Start my own planner</button></div>`:"")+r();document.querySelector(".main").classList.toggle("blue",view!=="today"&&view!=="ideas");
   const m=document.querySelector(".main");if(m)window.scrollTo(0,0);
 }
 
@@ -1296,7 +1300,7 @@ function startOwn(brand,handle){
 
 /* ---------- cloud accounts + sync (Supabase) ---------- */
 const CFG=window.KOFVI_CONFIG||{};
-let sb=null,user=null,pushTimer=null,pulling=false;
+let sb=null,user=null,pushTimer=null,pulling=false,granted=false;
 function setSync(st){const el=$("#savedNote");if(!el||!window.__cloud)return;
   el.innerHTML={saving:"<b>Saving…</b>",synced:"<b>Synced</b> to your account. Open it on any device.",offline:"<b>Offline.</b> Saved on this device, will sync when you're back online.",error:"<b>Couldn't sync.</b> Your work is saved on this device."}[st]||"";}
 function dataUrlToBlob(u){const [h,b]=u.split(",");const mime=(h.match(/data:([^;]+)/)||[])[1]||"image/webp";const bin=atob(b);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:mime})}
@@ -1321,23 +1325,23 @@ async function signPhotos(){
   for(let i=0;i<paths.length;i+=100){const {data}=await sb.storage.from("photos").createSignedUrls(paths.slice(i,i+100),60*60*24*7);(data||[]).forEach(d=>{if(d.signedUrl)SIGNED[d.path]=d.signedUrl})}
 }
 function cloudPush(){
-  if(!sb||!user||pulling)return;
+  if(!sb||!user||pulling||!granted)return;
   setSync("saving");clearTimeout(pushTimer);
   pushTimer=setTimeout(async()=>{
     try{
       if(await uploadPending()){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
       const t=new Date().toISOString();S._t=Date.parse(t);S._uid=user.id;
       try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
-      const {error}=await sb.from("planners").upsert({user_id:user.id,data:S,updated_at:t});
+      const {error}=await sb.from("planners").upsert({user_id:user.id,product:PRODUCT,data:S,updated_at:t},{onConflict:"user_id,product"});
       setSync(error?(navigator.onLine?"error":"offline"):"synced");
     }catch(e){setSync(navigator.onLine?"error":"offline")}
     pushTimer=null;
   },1200);
 }
 async function cloudPull(){
-  if(!sb||!user)return;pulling=true;
+  if(!sb||!user||!granted)return;pulling=true;
   try{
-    const {data,error}=await sb.from("planners").select("data,updated_at").eq("user_id",user.id).maybeSingle();
+    const {data,error}=await sb.from("planners").select("data,updated_at").eq("user_id",user.id).eq("product",PRODUCT).maybeSingle();
     if(error){setSync(navigator.onLine?"error":"offline");return}
     if(data&&data.data&&data.data.posts){
       const rt=Date.parse(data.updated_at);
@@ -1363,6 +1367,7 @@ function showLogin(msg){
       <button class="btn pink" type="submit" id="lBtn">Email me a sign-in link</button>
       <div id="lMsg">${msg?`<div class="msg warn">${esc(msg)}</div>`:""}</div>
     </form>
+    <p class="loginalt">Just looking? <a href="?demo">Try the demo</a>, no sign-in needed. · <a href="/planner/">All Kofvi planners</a></p>
   </div>`;
   w.hidden=false;
 }
@@ -1371,7 +1376,7 @@ async function doLogin(){
   if(!email)return;btn.disabled=true;btn.textContent="Sending…";
   const fail=t=>{out.innerHTML=`<div class="msg warn">${esc(t)}</div>`;btn.disabled=false;btn.textContent="Email me a sign-in link"};
   try{
-    if(code){const {data:ok,error}=await sb.rpc("check_access_code",{p_code:code});if(error)return fail("We couldn't check the code. Check your connection and try again.");if(!ok)return fail("That access code isn't right. Copy it exactly as it appears in your Etsy download.");}
+    if(code){const {data:prod,error}=await sb.rpc("code_product",{p_code:code});if(error)return fail("We couldn't check the code. Check your connection and try again.");if(!prod)return fail("That access code isn't right. Copy it exactly as it appears in your Etsy download.");if(prod!==PRODUCT)return fail("This code is for a different Kofvi planner. Open that planner from kofvi.com/planner.");try{localStorage.setItem("kofvi-pending-code",code)}catch(e){}}
     const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:!!code,data:code?{access_code:code}:undefined}});
     if(error){
       if(/signups not allowed|not found|otp_disabled/i.test(error.message))return fail("We don't have a planner for this email yet. If you're new, add the access code from your Etsy download.");
@@ -1381,15 +1386,51 @@ async function doLogin(){
     out.innerHTML=`<div class="msg">Check your inbox. We sent a sign-in link to <b>${esc(email)}</b>. Open it on this device. You can close this tab.</div>`;btn.textContent="Link sent";
   }catch(e){fail("Something went wrong. Check your connection and try again.")}
 }
+
+async function hasAccess(){
+  try{const pc=localStorage.getItem("kofvi-pending-code");if(pc){await sb.rpc("redeem_access_code",{p_code:pc});localStorage.removeItem("kofvi-pending-code")}}catch(e){}
+  const {data,error}=await sb.from("user_products").select("product").eq("user_id",user.id).eq("product",PRODUCT).maybeSingle();
+  if(error)return null;return !!data;
+}
+function showUnlock(msg){
+  const w=$("#welcome");
+  w.innerHTML=`<div class="wcard login" role="dialog" aria-modal="true" aria-labelledby="uH"><span class="tape"></span>
+    <div class="eyebrow">Kofvi planners</div>
+    <h2 id="uH">Unlock the <span class="em">content planner</span></h2>
+    <p class="lead">You're signed in as <b>${esc(user.email||"")}</b>, but this planner isn't on your account yet. Enter the access code from your Etsy download.</p>
+    <form class="wbox main" id="unlockForm">
+      <label>Access code<input class="inp" id="uCode" autocomplete="off" required placeholder="e.g. KOFVI-XXXX-0000"></label>
+      <button class="btn pink" type="submit" id="uBtn">Unlock</button>
+      <div id="uMsg">${msg?`<div class="msg warn">${esc(msg)}</div>`:""}</div>
+    </form>
+    <p class="loginalt"><a href="?demo">Try the demo</a> · <a href="/planner/">All Kofvi planners</a> · <button type="button" class="lnk" data-act="signout">Sign out</button></p>
+  </div>`;
+  w.hidden=false;
+}
+async function doUnlock(){
+  const code=$("#uCode").value.trim(),btn=$("#uBtn");if(!code)return;btn.disabled=true;btn.textContent="Checking…";
+  const {data:prod}=await sb.rpc("code_product",{p_code:code});
+  if(prod&&prod!==PRODUCT){btn.disabled=false;btn.textContent="Unlock";return showUnlock("This code is for a different Kofvi planner. Open that planner from kofvi.com/planner.")}
+  const {data,error}=await sb.rpc("redeem_access_code",{p_code:code});
+  if(error||data!==PRODUCT){btn.disabled=false;btn.textContent="Unlock";return showUnlock(error?"We couldn't check the code. Check your connection and try again.":"That access code isn't right. Copy it exactly as it appears in your Etsy download.")}
+  await openPlanner();
+}
+async function openPlanner(){
+  const ok=await hasAccess();
+  if(ok===null){showLogin("We couldn't reach your account. Check your connection and refresh.");return}
+  if(!ok){granted=false;showUnlock();return}
+  granted=true;
+  await cloudPull();if(location.search.includes("code="))history.replaceState(null,"",location.pathname+location.hash);render();if(!S.welcomed)showWelcome(false);else $("#welcome").hidden=true;
+}
 async function cloudBoot(){
   sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}});
   window.__cloud=true;
   const {data:{session}}=await sb.auth.getSession();
   if(!session){showLogin(/error_description=([^&]+)/.test(location.href)?decodeURIComponent(RegExp.$1.replace(/\+/g," ")):"");}
-  else{user=session.user;await cloudPull();render();if(!S.welcomed)showWelcome(false);else $("#welcome").hidden=true}
+  else{user=session.user;await openPlanner()}
   sb.auth.onAuthStateChange((ev,ses)=>{
-    if(ev==="SIGNED_IN"&&ses&&(!user||user.id!==ses.user.id)){user=ses.user;cloudPull().then(()=>{if(location.search.includes("code="))history.replaceState(null,"",location.pathname+location.hash);render();if(!S.welcomed)showWelcome(false);else $("#welcome").hidden=true})}
-    if(ev==="SIGNED_OUT"){user=null;showLogin()}
+    if(ev==="SIGNED_IN"&&ses&&(!user||user.id!==ses.user.id)){user=ses.user;openPlanner()}
+    if(ev==="SIGNED_OUT"){user=null;granted=false;showLogin()}
   });
   window.addEventListener("focus",()=>{if(user&&!pushTimer)cloudPull().then(render)});
   window.addEventListener("online",()=>{if(user)cloudPush()});
@@ -1466,12 +1507,13 @@ document.addEventListener("change",ev=>{
 });
 document.addEventListener("submit",ev=>{
   if(ev.target.id==="loginForm"){ev.preventDefault();doLogin();return}
+  if(ev.target.id==="unlockForm"){ev.preventDefault();doUnlock();return}
   if(ev.target.id==="wForm"){ev.preventDefault();const b=$("#wBrand").value.trim();if(!b)return;startOwn(b,$("#wHandle").value.trim());return}
   if(ev.target.id==="ideaForm"){ev.preventDefault();const tt=$("#iTitle").value.trim();if(!tt)return;S.ideas.unshift({id:"i"+Date.now(),title:tt,hook:"",pillar:$("#iPillar").value,platform:$("#iPlat").value});save();render();toast("Idea added to the jar")}
 });
 $("#dlg").addEventListener("close",()=>{editing=null});
 window.addEventListener("hashchange",route);
-if(CFG.supabaseUrl&&CFG.supabaseKey&&window.supabase){route();$("#welcome").innerHTML='<div class="wcard"><p class="lead">Opening your planner…</p></div>';$("#welcome").hidden=false;cloudBoot()}
-else{save();route();if(!S.welcomed)showWelcome(false);}
+if(!DEMO&&CFG.supabaseUrl&&CFG.supabaseKey&&window.supabase){route();$("#welcome").innerHTML='<div class="wcard"><p class="lead">Opening your planner…</p></div>';$("#welcome").hidden=false;cloudBoot()}
+else{if(DEMO)S.welcomed=true;save();route();if(!S.welcomed)showWelcome(false);}
 })();
 </script>
