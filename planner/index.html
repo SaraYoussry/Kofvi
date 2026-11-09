@@ -51,7 +51,7 @@ input::placeholder{color:#a8988a;font-style:italic}
 @media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:600px){.grid{grid-template-columns:1fr}}
 .pl{display:flex;flex-direction:column;gap:10px}
-.pl .cover{display:block;width:calc(100% + 48px);margin:-24px -24px 6px;aspect-ratio:1/1;height:auto;object-fit:cover;background:var(--paper);border-bottom:3px solid var(--esp);border-radius:19px 19px 0 0}
+.pl .cover{display:block;width:calc(100% + 48px);margin:-24px -24px 6px;aspect-ratio:4/3;height:auto;object-fit:cover;object-position:top left;background:var(--paper);border-bottom:3px solid var(--esp);border-radius:19px 19px 0 0}
 .pl .ph{display:grid;place-items:center}.pl .ph svg{width:30%;height:30%;opacity:.85}
 .pl .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .ico{width:52px;height:52px;border:3px solid var(--esp);border-radius:14px;display:grid;place-items:center;background:var(--paper)}
@@ -130,10 +130,11 @@ footer a:hover{color:var(--honey)}
 // Planner catalogue. To add a planner: add an entry with live:true, its folder under /planner/, and its product id.
 const PLANNERS = [
   {id:'social-media-planner', name:'Social Media Planner', path:'/planner/social/', live:true, color:'var(--straw)',
-   cover:'/assets/covers/social-media-planner.jpg',
+   cover:'/assets/covers/social-media-planner-app.jpg',
    blurb:'Plan posts, track what you published and see your best content in one cosy creator desk.',
    icon:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 13h3M8 17h6"/>'},
   {id:'book-tracker', name:'Book Tracker', path:'/planner/books/', live:true, color:'var(--blue)',
+   cover:'/assets/covers/book-tracker-app.jpg',
    blurb:'A bookshelf for everything you read: progress, ratings, your wishlist and a yearly reading challenge.',
    icon:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>'},
   {id:'more', name:'More planners', live:false, color:'var(--matcha)',
@@ -174,7 +175,7 @@ function render(){
       actions = `<a class="btn sm" href="${p.path}?demo">Try the demo</a><a class="btn sm alt" href="https://kofvi.etsy.com" target="_blank" rel="noopener">Buy on Etsy</a>`;
     }
     return `<div class="card pl" style="background:${p.color}">
-      ${p.cover?`<img class="cover" src="${p.cover}" alt="${esc(p.name)} cover" loading="lazy" width="720" height="720">`:`<div class="cover ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#2A1C15" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${p.icon}</svg></div>`}
+      ${p.cover?`<img class="cover" src="${p.cover}" alt="${esc(p.name)} cover" loading="lazy" width="960" height="720">`:`<div class="cover ph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#2A1C15" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${p.icon}</svg></div>`}
       <div class="head"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#2A1C15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p.icon}</svg></div><span class="badge">${badge}</span></div>
       <h3>${esc(p.name)}</h3><p>${esc(p.blurb)}</p>
       <div class="actions">${actions}</div></div>`;
