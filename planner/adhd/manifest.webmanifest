@@ -1,0 +1,16 @@
+{
+  "name": "Kofvi ADHD Life Planner",
+  "short_name": "Kofvi Planner",
+  "description": "A calm ADHD life planner: today, plans, money, wellness, goals and more.",
+  "id": "/planner/adhd/",
+  "start_url": "/planner/adhd/",
+  "scope": "/planner/adhd/",
+  "display": "standalone",
+  "background_color": "#F4FCFD",
+  "theme_color": "#3E95E0",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
