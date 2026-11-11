@@ -2963,6 +2963,10 @@ body:has(#frWrap:not([hidden]) .frbox) #tourChip{display:none!important}
 /* Course card: thumbnail always pinned to the right, same spot on every card */
 .crtop>.grow{flex:1 1 auto;min-width:0}.crtop>.crthumb.sq{margin-left:auto;margin-right:12px}
 @media (max-width:600px){.crtop>.crthumb.sq{width:56px;height:56px;border-radius:14px;margin-right:4px}.crtop{gap:12px}}
+/* Search: clear focused state while typing */
+body[data-look^="pers"] .gsearch label:focus-within{box-shadow:0 0 0 2px var(--pri,#3E95E0),0 0 0 6px color-mix(in srgb,var(--pri,#3E95E0) 18%,transparent)!important}
+.gsearch label:focus-within svg{color:var(--pri,#3E95E0)}.gsearch label:focus-within kbd{opacity:0}
+body[data-look^="pers"] .gsearch input{color:var(--ink)!important;caret-color:var(--pri,#3E95E0)}
 
 </style>
 
