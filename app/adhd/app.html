@@ -4291,7 +4291,7 @@ const TR={
 };
 const tr=s=>(TR[S.lang]&&TR[S.lang][s])||s;
 const CURS=[["£","£ Pound"],["$","$ Dollar"],["€","€ Euro"],["E£","E£ Egyptian pound"],["AED ","AED Dirham"],["SAR ","SAR Riyal"],["C$","C$ Canadian dollar"],["A$","A$ Australian dollar"],["₹","₹ Rupee"],["¥","¥ Yen"]];
-S.lang=S.lang||"en";
+S.lang="en"; /* English only for launch: page text is not translated yet (picker hidden) */
 COLL.profile={arr:()=>[S],title:"profile",fields:[["name","Your name","text"],["photo","Profile picture","file","image/*"]],blank:()=>S};
 
 function viewSettings(){const L=S.lang;
@@ -4299,8 +4299,8 @@ function viewSettings(){const L=S.lang;
  <div class="grid">
   <div class="card c4 setprof"><p class="kick">Profile</p><label class="avbig" data-tip="Change picture">${S.photo?`<span class="avimg" data-fid="${S.photo.id}"></span>`:`<span>${esc(S.name[0]||"A")}</span>`}<input type="file" accept="image/*" hidden id="photoIn"><i>${I("img",16)}</i></label>
    <label class="field" style="width:100%">Your name<input id="setName" value="${esc(S.name)}"></label>${S.photo?`<button class="btn ghost sm" data-act="nophoto" style="margin-top:10px">Remove picture</button>`:""}</div>
-  <div class="card c4"><p class="kick">Language and money</p><h2 style="margin-bottom:12px">Language</h2><div class="langs">${LANGS.map(([k,n])=>`<button data-act="lang:${k}" aria-pressed="${L===k}">${n}</button>`).join("")}</div>
-   <h2 style="margin:18px 0 10px">Currency</h2><label class="field">Shown on every money page<select id="setCur">${CURS.map(([k,n])=>`<option value="${esc(k)}" ${S.cur===k?"selected":""}>${n}</option>`).join("")}</select></label>
+  <div class="card c4"><p class="kick">Money</p>
+   <h2 style="margin:0 0 10px">Currency</h2><label class="field">Shown on every money page<select id="setCur">${CURS.map(([k,n])=>`<option value="${esc(k)}" ${S.cur===k?"selected":""}>${n}</option>`).join("")}</select></label>
    <label class="field" style="margin-top:10px">Payday (day of month)<input id="setPay" inputmode="numeric" value="${S.payday}"></label></div>
   <div class="card c4"><p class="kick">Your day</p><h2 style="margin-bottom:12px">Look and rhythm</h2><div class="langs">${[["pers","Personal"],["persdk","Personal dark"],["auto","Match my device"],["day","Daylight"],["night","Midnight"],["peach","Peach"]].map(([k,n])=>`<button data-act="look:${k}" aria-pressed="${S.look===k}">${n}</button>`).join("")}</div>
    <div class="row" style="gap:10px;margin-top:14px"><label class="field" style="flex:1">Day starts<input type="time" id="setStart" value="${String(Math.floor(S.dayStart)).padStart(2,"0")}:${String(Math.round(S.dayStart%1*60)).padStart(2,"0")}"></label><label class="field" style="flex:1">Day ends<input type="time" id="setEnd" value="${String(Math.floor(S.dayEnd)).padStart(2,"0")}:${String(Math.round(S.dayEnd%1*60)).padStart(2,"0")}"></label></div>
@@ -4371,7 +4371,7 @@ function sideHTML(){const mini=!!S.sideMini,ALL=["home",...HUBS.map(h=>h.id)];
  const row=k=>{if(k==="home")return `<a class="srow ${view==="home"?"on":""}" href="#home" style="--hc:#FFE3CC;--hd:#F2850F" title="${tr("Home")}"><i>${I("home",18)}</i><span>${tr("Home")}</span></a>`;
   const h=HUB[k],on=view===k;if(isHid(k))return "";return `<a class="srow ${on?"on":""}" href="${hubHref(h)}" style="--hc:${h.c};--hd:${h.dc}" title="${tr(h.n)}"><i>${I(h.ic,18)}</i><span>${tr(h.n)}</span><em>${visSubs(h).length}</em></a>${on&&!mini?`<div class="ssubs" style="--hd:${h.dc}">${visSubs(h).map(([s2,n])=>`<a href="#${k}${s2===h.subs[0][0]?"":"-"+s2}" ${sub===s2?'aria-current="page"':""}>${tr(n)}</a>`).join("")}</div>`:""}`};
  return `<div class="sscroll"><p class="slabel">${mini?"":"Today"}</p>${row("home")}<p class="slabel">${mini?"":"Life areas"}</p>${["plan","money","well","mind","goals"].map(row).join("")}<p class="slabel">${mini?"":"More of you"}</p>${["people","house","learn","explore","career","vault"].map(row).join("")}</div>
- <div class="sfoot"><a class="srow ${view==="hubs"?"on":""}" href="#hubs" style="--hc:var(--card2);--hd:var(--ink)" title="${tr("All hubs")}"><i>${I("grid",18)}</i><span>${tr("All hubs")}</span></a><a class="srow ${view==="settings"?"on":""}" href="#settings" style="--hc:var(--card2);--hd:var(--ink)" title="${tr("Settings")}"><i>${I("gear",18)}</i><span>${tr("Settings")}</span></a><button class="srow" data-act="sidemini" aria-label="${mini?"Open side menu":"Shrink side menu"}" style="--hc:var(--card2);--hd:var(--soft)"><i>${I("side",18)}</i><span>Shrink menu</span></button></div>`}
+ <div class="sfoot"><a class="srow ${view==="hubs"?"on":""}" href="#hubs" style="--hc:var(--card2);--hd:var(--ink)" title="${tr("All hubs")}"><i>${I("grid",18)}</i><span>${tr("All hubs")}</span></a><a class="srow ${view==="settings"?"on":""}" href="#settings" style="--hc:#E4E9F0;--hd:#4A5A70" title="${tr("Settings")}"><i>${I("gear",18)}</i><span>${tr("Settings")}</span></a><button class="srow" data-act="sidemini" aria-label="${mini?"Open side menu":"Shrink side menu"}" style="--hc:var(--card2);--hd:var(--soft)"><i>${I("side",18)}</i><span>Shrink menu</span></button></div>`}
 HACT.sidemini=()=>{S.sideMini=!S.sideMini};
 
 /* search */
@@ -4420,7 +4420,7 @@ function sideHTML(){const mini=!!S.sideMini,cur=spaceOf();
   return `<a class="srow ${on?"on":""}" href="${href}" style="--hc:${c};--hd:${dc}" title="${tr(n)}"><i>${I(ic,18)}</i><span>${tr(n)}</span></a>${inner}`};
  const vh=HUB.vault;
  return `<div class="sscroll">${SPACES.map(row).join("")}</div>
- <div class="sfoot"><a class="srow ${view==="vault"?"on":""}" href="#vault" style="--hc:${vh.c};--hd:${vh.dc}" title="${tr(vh.n)}"><i>${I("vault",18)}</i><span>${tr(vh.n)}</span></a><a class="srow ${view==="settings"?"on":""}" href="#settings" style="--hc:var(--card2);--hd:var(--ink)" title="${tr("Settings")}"><i>${I("gear",18)}</i><span>${tr("Settings")}</span></a><button class="srow" data-act="sidemini" aria-label="${mini?"Open side menu":"Shrink side menu"}" style="--hc:var(--card2);--hd:var(--soft)"><i>${I("side",18)}</i><span>${tr("Shrink menu")}</span></button></div>`}
+ <div class="sfoot"><a class="srow ${view==="vault"?"on":""}" href="#vault" style="--hc:${vh.c};--hd:${vh.dc}" title="${tr(vh.n)}"><i>${I("vault",18)}</i><span>${tr(vh.n)}</span></a><a class="srow ${view==="settings"?"on":""}" href="#settings" style="--hc:#E4E9F0;--hd:#4A5A70" title="${tr("Settings")}"><i>${I("gear",18)}</i><span>${tr("Settings")}</span></a><button class="srow" data-act="sidemini" aria-label="${mini?"Open side menu":"Shrink side menu"}" style="--hc:var(--card2);--hd:var(--soft)"><i>${I("side",18)}</i><span>${tr("Shrink menu")}</span></button></div>`}
 function viewSpace(k){const s=SP[k],ST=story(),hubs=s[3].filter(h=>!isHid(h));
  return `<div class="hello"><div><small>${tr(s[1])}</small><h1>${tr(s[1])} <em>${k==="me"?tr("first"):tr("and everything in it")}</em></h1><p class="story" style="margin-top:8px">${tr(s[6])}</p></div></div>
  <div class="grid">${hubs.map(h=>{const H=HUB[h],st=ST[h];return `<div class="card c4 spacecard" style="--hc:${H.c};--hd:${H.dc}"><a class="spc-top" href="${hubHref(H)}"><span class="hubic">${I(H.ic,22)}</span><h2>${tr(H.n)}</h2></a><p class="spc-story">${st?st.p:""}</p><div class="spc-pages">${visSubs(H).map(([s2,nm])=>`<a href="#${h}${s2===H.subs[0][0]?"":"-"+s2}">${tr(nm)}</a>`).join("")}</div></div>`}).join("")}</div>`}
