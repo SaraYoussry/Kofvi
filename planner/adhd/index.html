@@ -4337,9 +4337,15 @@ document.addEventListener("change",e=>{const t=e.target,id=t.id,num=v=>parseFloa
  else if(id==="photoIn"&&t.files[0]){putFile(t.files[0]).then(m=>{S.photo=m;save();render();toast("Looking good")});return}
  else if(id==="csvIn"&&t.files[0]){t.files[0].text().then(csvIn);return}
  else return;save();render()});
-function csvIn(text){const rows=text.split(/\r?\n/).map(r=>r.split(",")).filter(r=>r.length>1);let n=0;
- rows.slice(1).forEach(r=>{const amt=Math.abs(parseFloat(r.find(c=>/^-?\d+(\.\d+)?$/.test(c.trim()))));if(!amt)return;const desc=(r.find(c=>/[a-z]/i.test(c))||"Other").toLowerCase();
-  const cat=/tesco|aldi|lidl|grocer|market|sainsbury|carrefour/.test(desc)?"Groceries":/uber|bus|train|fuel|petrol|tfl/.test(desc)?"Transport":/restaurant|cafe|coffee|deliveroo|eat/.test(desc)?"Eating out":/cinema|netflix|spotify|game/.test(desc)?"Fun":"Other";
+function csvRows(text){const out=[];let row=[],f="",q=false;for(let i=0;i<text.length;i++){const ch=text[i];if(q){if(ch==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=ch}else if(ch==='"')q=true;else if(ch===","){row.push(f);f=""}else if(ch==="\n"||ch==="\r"){if(ch==="\r"&&text[i+1]==="\n")i++;row.push(f);f="";if(row.some(c=>c.trim()))out.push(row);row=[]}else f+=ch}row.push(f);if(row.some(c=>c.trim()))out.push(row);return out}
+const CSVCAT=[["Groceries",/walmart|target|kroger|costco|safeway|publix|trader joe|whole foods|aldi|h-?e-?b|albertsons|wegmans|food lion|sprouts|grocer|market|instacart|tesco|lidl|sainsbury|carrefour/],["Eating out",/starbucks|dunkin|mcdonald|chipotle|chick-?fil|taco bell|wendy|burger|subway|domino|pizza|panera|doordash|uber ?eats|grubhub|postmates|restaurant|cafe|coffee|diner|grill|kitchen|bar\b|deliveroo/],["Transport",/uber|lyft|shell|chevron|exxon|mobil|bp\b|marathon|speedway|7-eleven|gas|fuel|parking|toll|transit|metro|mta|amtrak|bus|train|petrol|tfl/],["Fun",/netflix|hulu|disney|hbo|max\b|spotify|apple music|youtube|amc|regal|cinema|movie|steam|playstation|xbox|nintendo|game|ticketmaster|concert/],["Shopping",/amazon|amzn|etsy|ebay|best buy|home depot|lowe|ikea|tj ?maxx|marshalls|ross|old navy|gap\b|zara|h&m|sephora|ulta|nordstrom|macy|kohl/],["Health",/cvs|walgreens|rite aid|pharmacy|doctor|dental|clinic|hospital|gym|planet fitness/]];
+function csvIn(text){const rows=csvRows(text).filter(r=>r.length>1);let n=0;
+ const num=c=>{const t=c.trim();if(!/^\(?-?\s*[$£€]?\s*-?[\d,]+(\.\d+)?\)?$/.test(t)||!/\d/.test(t))return NaN;return parseFloat(t.replace(/[()$£€,\s]/g,""))};
+ const isDate=c=>/^\s*(\d{1,4}[\/.-]\d{1,2}[\/.-]\d{1,4})\s*$/.test(c);
+ const amtOf=r=>r.map(num).find(v=>!isNaN(v)&&v!==0),hasNeg=rows.slice(1).some(r=>amtOf(r)<0); /* money out is negative in most US bank files: then skip deposits */
+ rows.slice(1).forEach(r=>{const a=amtOf(r);if(a==null||(hasNeg&&a>0))return;const amt=Math.abs(a);
+  const desc=(r.filter(c=>/[a-z]/i.test(c)&&!isDate(c)).sort((x,y)=>y.length-x.length)[0]||"Other").toLowerCase();
+  const hit=CSVCAT.find(([,re])=>re.test(desc)),cat=hit?hit[0]:"Other";
   let c=S.spent.find(x=>x.c===cat);if(!c){c={c:cat,plan:100,act:0};S.spent.push(c)}c.act+=amt;n++});
  save();render();toast(n?n+" payments sorted into your spending":"No payments found in that file")}
 
@@ -4477,7 +4483,7 @@ function qParse(s){const p={},L=" "+s.toLowerCase()+" ";let rest=s;const cut=re=
  if(m=/\b(?:at )?(\d{1,2})(?::(\d{2}))? ?(am|pm)\b/.exec(L)){let h=+m[1]%12+(m[3]==="pm"?12:0);p.at=h+(+m[2]||0)/60;cut(/\b(?:at )?\d{1,2}(?::\d{2})? ?(am|pm)\b/i)}
  else if(m=/\bat (\d{1,2}):(\d{2})\b/.exec(L)){p.at=+m[1]+ +m[2]/60;cut(/\bat \d{1,2}:\d{2}\b/i)}
  if(m=/\b(\d{1,3}) ?(min|mins|minutes|h|hr|hrs|hours?)\b/.exec(L)){p.min=/^h/.test(m[2])?+m[1]*60:+m[1];cut(/\b(for )?\d{1,3} ?(min|mins|minutes|h|hr|hrs|hours?)\b/i)}
- if(m=/(?:[£$€]|egp ?)(\d+(?:[.,]\d{1,2})?)|(\d+(?:[.,]\d{1,2})?) ?(?:£|\$|€|egp|pounds|dollars|euros)\b/i.exec(s)){p.amt=parseFloat((m[1]||m[2]).replace(",","."));cut(/(?:[£$€]|egp ?)\d+(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})? ?(?:£|\$|€|egp|pounds|dollars|euros)\b/i)}
+ if(m=/(?:[£$€]|egp ?)(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:[.,]\d{1,2})?)|(\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:[.,]\d{1,2})?) ?(?:£|\$|€|egp|pounds|dollars|euros)\b/i.exec(s)){const v=m[1]||m[2];p.amt=parseFloat(/,\d{3}(\D|$)/.test(v)?v.replace(/,/g,""):v.replace(",","."));cut(/(?:[£$€]|egp ?)(?:\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:[.,]\d{1,2})?)|(?:\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?|\d+(?:[.,]\d{1,2})?) ?(?:£|\$|€|egp|pounds|dollars|euros)\b/i)}
  rest=rest.replace(/\b(on|at|by|for|due)\s*$/i,"").replace(/^(remind me to|i need to|need to|todo:?|to do:?)\s+/i,"").trim();
  p.text=rest?rest[0].toUpperCase()+rest.slice(1):"";return p}
 function nextWd(w){const d=new Date(TODAY);const k=(w-d.getDay()+7)%7||7;return addD(d,k)}
