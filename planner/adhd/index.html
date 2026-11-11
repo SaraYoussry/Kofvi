@@ -2960,6 +2960,9 @@ body:has(#frWrap:not([hidden]) .frbox) #tourChip{display:none!important}
 .kcard .krow{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}
 .kcard .krow b{display:block;font-size:15px}.kcard .krow small{color:var(--soft);font-size:13px}
 .kcard .head .kacct{padding:0}
+/* Course card: thumbnail always pinned to the right, same spot on every card */
+.crtop>.grow{flex:1 1 auto;min-width:0}.crtop>.crthumb.sq{margin-left:auto;margin-right:12px}
+@media (max-width:600px){.crtop>.crthumb.sq{width:56px;height:56px;border-radius:14px;margin-right:4px}.crtop{gap:12px}}
 
 </style>
 
